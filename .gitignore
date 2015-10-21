@@ -1,5 +1,7 @@
-## Java
+## Custom
+android/assets/final/
 
+## Java
 *.class
 *.war
 *.ear
@@ -62,3 +64,4 @@ build/
 
 ## OS Specific
 .DS_Store
+desktop.ini
