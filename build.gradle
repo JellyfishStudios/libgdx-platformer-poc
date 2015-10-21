@@ -20,7 +20,7 @@ allprojects {
         ashleyVersion = '1.6.0'
         aiVersion = '1.5.0'
         spineVersion = '1.0.0'
-        rubegdxliteVersion = '1.0.0'
+        rubeliteVersion = '1.0.0'
     }
 
     repositories {
@@ -67,6 +67,11 @@ project(":core") {
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+
+        // Local repositories
+        //
+        compile "com.esotericsoftware.spine:spine-libgdx:$spineVersion"
+        compile "com.anogaijin.rubegdxlite:rubegdxlite:$rubeliteVersion"
     }
 }
 
