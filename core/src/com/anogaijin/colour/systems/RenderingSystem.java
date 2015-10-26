@@ -79,6 +79,7 @@ public class RenderingSystem extends EntitySystem {
 
         model.skeleton.setPosition(transform.position.x, transform.position.y);
         model.skeleton.getRootBone().setRotation(transform.rotation);
+        model.skeleton.setFlipX(transform.flipped);
         model.skeleton.updateWorldTransform();
 
         modelRenderer.draw(batch, model.skeleton);
