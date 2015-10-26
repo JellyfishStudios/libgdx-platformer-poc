@@ -34,7 +34,7 @@ public class SkeletonDataLoader extends AsynchronousAssetLoader<SkeletonData, Sk
                                 String.format("%s/%s.atlas", file.parent().path(), file.nameWithoutExtension()),
                                 TextureAtlas.class)));
 
-        json.setScale(0.004f);
+        json.setScale(0.003f);
 
         skeleton = json.readSkeletonData(Gdx.files.internal(fileName));
     }
