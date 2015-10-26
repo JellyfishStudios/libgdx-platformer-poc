@@ -34,7 +34,7 @@ public enum PlayerState implements State<CachedEntity> {
     Airborn() {
         @Override
         public void enter(CachedEntity entity) {
-            entity.remove(Jump.class);
+            entity.remove(Motion.class);
         }
 
         @Override
@@ -44,7 +44,7 @@ public enum PlayerState implements State<CachedEntity> {
 
         @Override
         public void exit(CachedEntity entity) {
-            entity.restore(Jump.class);
+            entity.restore(Motion.class);
         }
 
         @Override
