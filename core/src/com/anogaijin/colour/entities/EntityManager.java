@@ -9,7 +9,6 @@ import com.anogaijin.rubeloaderlite.RubeScene;
 import com.anogaijin.rubeloaderlite.containers.RubeRigidBody;
 import com.anogaijin.rubeloaderlite.containers.RubeTexture;
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -23,17 +22,18 @@ import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
  * Created by adunne on 2015/10/23.
  */
 public class EntityManager {
-    Engine ecsEngine;
     World physicsWorld;
+    Engine ecsEngine;
     AssetManagerEx assetManager;
 
     float humanDensity = 50f;
+    float humanFriction = 0f;
+    float humanFootFriction = 0f;
 
     short CATEGORY_PLAYER = 0x01;
     short CATEGORY_OBJECTS = 0x02;
-    short CATEGORY_ANYTHING = 0xFF;
 
-    InteractionSystem interactionSystem;
+    CharacterInteractionSystem interactionSystem;
     MovementSystem movementSystem;
     JumpSystem jumpSystem;
     TransformationSystem transformationSystemSystem;
@@ -46,9 +46,9 @@ public class EntityManager {
     }
 
     public void initialiseSystems() {
+        ecsEngine.addSystem(interactionSystem = new CharacterInteractionSystem());
         ecsEngine.addSystem(movementSystem = new MovementSystem());
         ecsEngine.addSystem(jumpSystem = new JumpSystem());
-        ecsEngine.addSystem(interactionSystem = new InteractionSystem());
         ecsEngine.addSystem(transformationSystemSystem = new TransformationSystem());
         ecsEngine.addSystem(cameraSystem = new CameraSystem());
         ecsEngine.addSystem(modelRenderingSystem = new RenderingSystem());
@@ -73,7 +73,7 @@ public class EntityManager {
 
             rubeRigidBody.rigidBody.setUserData(entity);
 
-            entity.add(new Collider(rubeRigidBody.rigidBody));
+            entity.add(new RigidBody(rubeRigidBody.rigidBody));
             ecsEngine.addEntity(entity);
 
             entities.put(rubeRigidBody.rigidBody.hashCode(), entity);
@@ -90,7 +90,7 @@ public class EntityManager {
                     entity = new CachedEntity();
 
                     rubeTexture.rubeRigidBody.rigidBody.setUserData(entity);
-                    entity.add(new Collider(rubeTexture.rubeRigidBody.rigidBody));
+                    entity.add(new RigidBody(rubeTexture.rubeRigidBody.rigidBody));
                     ecsEngine.addEntity(entity);
                 }
             }
@@ -121,7 +121,7 @@ public class EntityManager {
 
     public void initialiseCharactersEntities() {
         try {
-            CachedEntity charEntity = new CachedEntity();
+            CachedEntity entity = new CachedEntity();
 
             Transform trans = new Transform(new Vector2(2f, 5f), new Vector2(1f, 1f), 0f);
 
@@ -132,34 +132,24 @@ public class EntityManager {
             skeleton.updateWorldTransform();
 
             Body body = loadRigidBody(skeleton);
-            body.setUserData(charEntity);
+            body.setUserData(entity);
 
-            charEntity.add(trans);
-            charEntity.add(new Model(skeleton));
-            charEntity.add(new Collider(body));
-            charEntity.add(new CharacterSensor());
-            charEntity.add(new Motion());
-            charEntity.add(new Jump());
-            charEntity.add(new Controller());
-            charEntity.add(new Brain<>(charEntity, PlayerState.Grounded));
+            entity.add(trans);
+            entity.add(new Model(skeleton));
+            entity.add(new RigidBody(body));
+            entity.add(new CharacterSensor());
+            entity.add(new Motion());
+            entity.add(new Jump());
+            entity.add(new Controller());
+            entity.add(new Camera(ecsEngine.getSystem(RenderingSystem.class).getCamera()));
+            entity.add(new Brain<>(entity, PlayerState.Grounded));
 
-            ecsEngine.addEntity(charEntity);
-
-            // good time to add a camera and attach it to this
-            //
-            CachedEntity camEntity = new CachedEntity();
-            camEntity.add(new Camera(ecsEngine.getSystem(RenderingSystem.class).getCamera(), charEntity));
-
-            ecsEngine.addEntity(camEntity);
+            ecsEngine.addEntity(entity);
 
         }catch (Exception ex) {
         }
 
         refreshSystems();
-    }
-
-    public World getPhysicsWorld() {
-        return physicsWorld;
     }
 
     private Body loadRigidBody(Skeleton model) throws Exception {
@@ -225,21 +215,21 @@ public class EntityManager {
         FixtureDef squareFixtureDef = new FixtureDef();
         squareFixtureDef.shape = rectangle;
         squareFixtureDef.density = humanDensity * 0.50f;
-        squareFixtureDef.friction = 0f;
+        squareFixtureDef.friction = humanFriction;
         squareFixtureDef.filter.categoryBits = CATEGORY_PLAYER;
         squareFixtureDef.filter.maskBits = CATEGORY_OBJECTS;
 
         FixtureDef circularTopFixtureDef = new FixtureDef();
         circularTopFixtureDef.shape = circleTop;
         circularTopFixtureDef.density = humanDensity * 0.25f;
-        circularTopFixtureDef.friction =0f;
+        circularTopFixtureDef.friction = humanFriction;
         circularTopFixtureDef.filter.categoryBits = CATEGORY_PLAYER;
         circularTopFixtureDef.filter.maskBits = CATEGORY_OBJECTS;
 
         FixtureDef circularBottomFixtureDef = new FixtureDef();
         circularBottomFixtureDef.shape = circleBottom;
         circularBottomFixtureDef.density = humanDensity * 0.25f;
-        circularBottomFixtureDef.friction = 0f;
+        circularBottomFixtureDef.friction = humanFootFriction;
         circularBottomFixtureDef.filter.categoryBits = CATEGORY_PLAYER;
         circularBottomFixtureDef.filter.maskBits = CATEGORY_OBJECTS;
 
@@ -275,5 +265,9 @@ public class EntityManager {
         bodyDef.angle = (model.getRootBone().getWorldRotation() * MathUtils.degRad);
 
         return physicsWorld.createBody(bodyDef);
+    }
+
+    public World getPhysicsWorld() {
+        return physicsWorld;
     }
 }

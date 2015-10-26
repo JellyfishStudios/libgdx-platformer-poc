@@ -35,7 +35,7 @@ public class Colour extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		entityManager.getPhysicsWorld().step(1f / 60f, 8, 3);
+		entityManager.getPhysicsWorld().step(1/60f, 8, 3);
 		ecsEngine.update(Gdx.graphics.getDeltaTime());
 
 		b2dr.render(entityManager.getPhysicsWorld(), ecsEngine.getSystem(RenderingSystem.class).getCamera().combined);

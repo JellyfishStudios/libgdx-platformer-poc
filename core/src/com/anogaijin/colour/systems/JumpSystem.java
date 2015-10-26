@@ -12,18 +12,18 @@ import com.badlogic.gdx.Gdx;
  * Created by adunne on 2015/09/24.
  */
 public class JumpSystem extends IteratingSystem {
-    ComponentMapper<Collider> rbm = ComponentMapper.getFor(Collider.class);
+    ComponentMapper<RigidBody> rbm = ComponentMapper.getFor(RigidBody.class);
     ComponentMapper<Controller> cm = ComponentMapper.getFor(Controller.class);
     ComponentMapper<Motion> mm = ComponentMapper.getFor(Motion.class);
     ComponentMapper<Brain> bm = ComponentMapper.getFor(Brain.class);
 
     public JumpSystem() {
-        super(Family.all(Collider.class, Motion.class, Jump.class, Controller.class, Brain.class).get());
+        super(Family.all(RigidBody.class, Motion.class, Jump.class, Controller.class, Brain.class).get());
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        Collider collider = rbm.get(entity);
+        RigidBody collider = rbm.get(entity);
         Controller controller = cm.get(entity);
         Motion motion = mm.get(entity);
         Brain brain = bm.get(entity);
@@ -34,17 +34,20 @@ public class JumpSystem extends IteratingSystem {
             // Calculates required force to reach desired velocity in a given time-step
             //
             motion.force.y = PhysicsUtil.calculateRequiredImpulse(
-                    collider.rigidBody.getMass(),
+                    collider.body.getMass(),
                     motion.velocity.y,
-                    collider.rigidBody.getLinearVelocity().y);
+                    collider.body.getLinearVelocity().y);
+
+            if (motion.force.y == 0f)
+                return;
 
             // Apply impulse!
             //
-            collider.rigidBody.applyLinearImpulse(
+            collider.body.applyLinearImpulse(
                     0f,
                     motion.force.y,
-                    collider.rigidBody.getWorldCenter().x,
-                    collider.rigidBody.getWorldCenter().y,
+                    collider.body.getWorldCenter().x,
+                    collider.body.getWorldCenter().y,
                     true);
         }
     }

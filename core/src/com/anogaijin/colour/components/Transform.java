@@ -20,4 +20,5 @@ public class Transform implements Component {
     public Vector2 position;
     public Vector2 scale;
     public float rotation;
+    public boolean flipped = false;
 }

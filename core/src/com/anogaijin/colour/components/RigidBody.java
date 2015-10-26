@@ -8,17 +8,17 @@ import com.badlogic.gdx.utils.ObjectMap;
 /**
  * Created by adunne on 2015/09/24.
  */
-public class Collider implements Component {
-    public Collider() {
+public class RigidBody implements Component {
+    public RigidBody() {
         this(null);
     }
 
-    public Collider(Body rigidBody) {
-        this.rigidBody = rigidBody;
-
-        contacts = new ObjectMap<>();
+    public RigidBody(Body rigidBody) {
+        this.body = rigidBody;
     }
 
-    public ObjectMap<String, ContactData> contacts;
-    public Body rigidBody;
+    public boolean flipped = false;
+    public ObjectMap<String, ContactData> contacts = new ObjectMap<>();
+    public Body body;
+
 }

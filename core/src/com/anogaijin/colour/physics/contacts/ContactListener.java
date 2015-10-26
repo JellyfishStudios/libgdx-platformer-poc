@@ -1,10 +1,8 @@
 package com.anogaijin.colour.physics.contacts;
 
 import com.anogaijin.colour.components.*;
-import com.anogaijin.colour.physics.contacts.ContactData;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
@@ -13,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
  * Created by adunne on 2015/09/19.
  */
 public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactListener {
-    ComponentMapper<Collider> rbm = ComponentMapper.getFor(Collider.class);
+    ComponentMapper<RigidBody> rbm = ComponentMapper.getFor(RigidBody.class);
 
     @Override
     public void beginContact(Contact contact) {
@@ -31,8 +29,8 @@ public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactLi
         if (entityA.equals(entityB))
             return;
 
-        Collider a = rbm.get(entityA);
-        Collider b = rbm.get(entityB);
+        RigidBody a = rbm.get(entityA);
+        RigidBody b = rbm.get(entityB);
 
         ContactData contactData = new ContactData(contact);
 
@@ -59,8 +57,8 @@ public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactLi
         if (entityA.equals(entityB))
             return;
 
-        Collider a = rbm.get(entityA);
-        Collider b = rbm.get(entityB);
+        RigidBody a = rbm.get(entityA);
+        RigidBody b = rbm.get(entityB);
 
         a.contacts.remove(ContactData.generageNewContactId(contact));
         b.contacts.remove(ContactData.generageNewContactId(contact));
