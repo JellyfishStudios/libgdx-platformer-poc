@@ -32,6 +32,7 @@ public class EntityManager {
     short CATEGORY_PLAYER = 0x01;
     short CATEGORY_OBJECTS = 0x02;
 
+    KeyboardInputSystem keyboardInputSystem;
     SensorDetectionSystem interactionSystem;
     WalkingSystem movementSystem;
     FallingSystem fallingSystem;
@@ -47,6 +48,7 @@ public class EntityManager {
     }
 
     public void initialiseSystems() {
+        ecsEngine.addSystem(keyboardInputSystem = new KeyboardInputSystem());
         ecsEngine.addSystem(interactionSystem = new SensorDetectionSystem());
         ecsEngine.addSystem(movementSystem = new WalkingSystem());
         ecsEngine.addSystem(jumpingSystem = new JumpingSystem());
@@ -58,6 +60,7 @@ public class EntityManager {
     }
 
     private void refreshSystems() {
+        keyboardInputSystem.addedToEngine(ecsEngine);
         movementSystem.addedToEngine(ecsEngine);
         jumpingSystem.addedToEngine(ecsEngine);
         fallingSystem.addedToEngine(ecsEngine);
@@ -144,10 +147,11 @@ public class EntityManager {
             entity.add(new Model(skeleton));
             entity.add(new RigidBody(body));
             entity.add(new CharacterSensor());
+            entity.add(new KeyboardController());
+            entity.add(new Input());
             entity.add(new Motion());
             entity.add(new Jump());
             entity.add(new Walk());
-            entity.add(new KeyboardController());
             entity.add(new Camera(ecsEngine.getSystem(RenderingSystem.class).getCamera()));
             entity.add(new Animation(new AnimationState(new AnimationStateData(skeletonData))));
             entity.add(new Brain<>(entity, CharacterState.Idle));

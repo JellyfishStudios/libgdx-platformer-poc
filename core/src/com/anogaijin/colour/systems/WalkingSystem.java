@@ -18,7 +18,7 @@ import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
  */
 public class WalkingSystem extends IteratingSystem {
     ComponentMapper<RigidBody> rbm = ComponentMapper.getFor(RigidBody.class);
-    ComponentMapper<KeyboardController> cm = ComponentMapper.getFor(KeyboardController.class);
+    ComponentMapper<Input> im = ComponentMapper.getFor(Input.class);
     ComponentMapper<Motion> mm = ComponentMapper.getFor(Motion.class);
     ComponentMapper<Brain> bm = ComponentMapper.getFor(Brain.class);
     ComponentMapper<Walk> wm = ComponentMapper.getFor(Walk.class);
@@ -31,7 +31,7 @@ public class WalkingSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         RigidBody rigidBody = rbm.get(entity);
-        KeyboardController controller = cm.get(entity);
+        Input input = im.get(entity);
         Motion motion = mm.get(entity);
         Walk walk = wm.get(entity);
         Brain brain = bm.get(entity);
@@ -45,7 +45,7 @@ public class WalkingSystem extends IteratingSystem {
             return;
         }
 
-        if (Gdx.input.isKeyPressed(controller.RIGHT)) {
+        if (input.MOVE_RIGHT) {
             motion.velocity.set(walk.terminalVelocity, motion.velocity.y);
 
             brain.movement.changeState(CharacterState.Walking);
@@ -53,7 +53,7 @@ public class WalkingSystem extends IteratingSystem {
             if (rigidBody.flipped)
                 flipRigidBody(rigidBody);
         }
-        else if (Gdx.input.isKeyPressed(controller.LEFT)) {
+        else if (input.MOVE_LEFT) {
             motion.velocity.set(-walk.terminalVelocity, motion.velocity.y);
 
             brain.movement.changeState(CharacterState.Walking);

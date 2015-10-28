@@ -14,7 +14,7 @@ import com.badlogic.gdx.Gdx;
  */
 public class JumpingSystem extends IteratingSystem {
     ComponentMapper<RigidBody> rbm = ComponentMapper.getFor(RigidBody.class);
-    ComponentMapper<KeyboardController> cm = ComponentMapper.getFor(KeyboardController.class);
+    ComponentMapper<Input> im = ComponentMapper.getFor(Input.class);
     ComponentMapper<Motion> mm = ComponentMapper.getFor(Motion.class);
     ComponentMapper<Brain> bm = ComponentMapper.getFor(Brain.class);
     ComponentMapper<Jump> jm = ComponentMapper.getFor(Jump.class);
@@ -27,7 +27,7 @@ public class JumpingSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         RigidBody rigidBody = rbm.get(entity);
-        KeyboardController controller = cm.get(entity);
+        Input input = im.get(entity);
         Motion motion = mm.get(entity);
         Brain brain = bm.get(entity);
         Jump jump = jm.get(entity);
@@ -35,7 +35,7 @@ public class JumpingSystem extends IteratingSystem {
         // Process input
         //
         if (brain.movement.getCurrentState() != CharacterState.Jumping) {
-            if (Gdx.input.isKeyJustPressed(controller.UP)) {
+            if (input.JUMP) {
                 // Inform the brain of what we're about to do
                 //
                 brain.movement.changeState(CharacterState.Jumping);
