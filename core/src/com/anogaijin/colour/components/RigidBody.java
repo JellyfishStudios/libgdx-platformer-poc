@@ -9,10 +9,6 @@ import com.badlogic.gdx.utils.ObjectMap;
  * Created by adunne on 2015/09/24.
  */
 public class RigidBody implements Component {
-    public RigidBody() {
-        this(null);
-    }
-
     public RigidBody(Body rigidBody) {
         this.body = rigidBody;
     }

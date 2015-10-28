@@ -2,6 +2,7 @@ package com.anogaijin.colour.components;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
 /**
@@ -13,7 +14,7 @@ public class CharacterSensor implements Component {
     public boolean leftIsTouching = false;
     public boolean rightIsTouching = false;
 
-    public ObjectMap<CharacterSensorType, Entity> entities = new ObjectMap<>();
+    public ObjectMap<CharacterSensorType, Array<Entity>> entities = new ObjectMap<>();
 
     public enum CharacterSensorType {
         Top,

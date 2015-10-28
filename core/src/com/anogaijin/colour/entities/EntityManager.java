@@ -2,9 +2,10 @@ package com.anogaijin.colour.entities;
 
 import com.anogaijin.colour.assets.AssetManagerEx;
 import com.anogaijin.colour.components.*;
+import com.anogaijin.colour.components.Animation;
 import com.anogaijin.colour.components.Transform;
 import com.anogaijin.colour.systems.*;
-import com.anogaijin.colour.systems.states.PlayerState;
+import com.anogaijin.colour.systems.states.CharacterState;
 import com.anogaijin.rubeloaderlite.RubeScene;
 import com.anogaijin.rubeloaderlite.containers.RubeRigidBody;
 import com.anogaijin.rubeloaderlite.containers.RubeTexture;
@@ -13,9 +14,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.SkeletonData;
-import com.esotericsoftware.spine.Slot;
+import com.esotericsoftware.spine.*;
 import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 
 /**
@@ -33,12 +32,14 @@ public class EntityManager {
     short CATEGORY_PLAYER = 0x01;
     short CATEGORY_OBJECTS = 0x02;
 
-    CharacterInteractionSystem interactionSystem;
-    MovementSystem movementSystem;
-    JumpSystem jumpSystem;
+    SensorDetectionSystem interactionSystem;
+    WalkingSystem movementSystem;
+    FallingSystem fallingSystem;
+    JumpingSystem jumpingSystem;
     TransformationSystem transformationSystemSystem;
     CameraSystem cameraSystem;
     RenderingSystem modelRenderingSystem;
+    AnimationSystem modelAnimationSystem;
 
     public EntityManager(Engine ecsEngine, AssetManagerEx assetManager) {
         this.ecsEngine = ecsEngine;
@@ -46,20 +47,24 @@ public class EntityManager {
     }
 
     public void initialiseSystems() {
-        ecsEngine.addSystem(interactionSystem = new CharacterInteractionSystem());
-        ecsEngine.addSystem(movementSystem = new MovementSystem());
-        ecsEngine.addSystem(jumpSystem = new JumpSystem());
+        ecsEngine.addSystem(interactionSystem = new SensorDetectionSystem());
+        ecsEngine.addSystem(movementSystem = new WalkingSystem());
+        ecsEngine.addSystem(jumpingSystem = new JumpingSystem());
+        ecsEngine.addSystem(fallingSystem = new FallingSystem());
         ecsEngine.addSystem(transformationSystemSystem = new TransformationSystem());
+        ecsEngine.addSystem(modelAnimationSystem = new AnimationSystem());
         ecsEngine.addSystem(cameraSystem = new CameraSystem());
         ecsEngine.addSystem(modelRenderingSystem = new RenderingSystem());
     }
 
     private void refreshSystems() {
         movementSystem.addedToEngine(ecsEngine);
-        jumpSystem.addedToEngine(ecsEngine);
+        jumpingSystem.addedToEngine(ecsEngine);
+        fallingSystem.addedToEngine(ecsEngine);
         interactionSystem.addedToEngine(ecsEngine);
         transformationSystemSystem.addedToEngine(ecsEngine);
         cameraSystem.addedToEngine(ecsEngine);
+        modelAnimationSystem.addedToEngine(ecsEngine);
         modelRenderingSystem.addedToEngine(ecsEngine);
     }
 
@@ -125,7 +130,8 @@ public class EntityManager {
 
             Transform trans = new Transform(new Vector2(2f, 5f), new Vector2(1f, 1f), 0f);
 
-            Skeleton skeleton = new Skeleton(assetManager.get("heroModel", SkeletonData.class));
+            SkeletonData skeletonData = assetManager.get("heroModel", SkeletonData.class);
+            Skeleton skeleton = new Skeleton(skeletonData);
             skeleton.setToSetupPose();
             skeleton.setPosition(trans.position.x, trans.position.y);
             skeleton.getRootBone().setRotation(trans.rotation);
@@ -140,9 +146,11 @@ public class EntityManager {
             entity.add(new CharacterSensor());
             entity.add(new Motion());
             entity.add(new Jump());
-            entity.add(new Controller());
+            entity.add(new Walk());
+            entity.add(new KeyboardController());
             entity.add(new Camera(ecsEngine.getSystem(RenderingSystem.class).getCamera()));
-            entity.add(new Brain<>(entity, PlayerState.Grounded));
+            entity.add(new Animation(new AnimationState(new AnimationStateData(skeletonData))));
+            entity.add(new Brain<>(entity, CharacterState.Idle));
 
             ecsEngine.addEntity(entity);
 
