@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.esotericsoftware.spine.SkeletonRenderer;
+import com.esotericsoftware.spine.SkeletonRendererDebug;
 
 /**
  * Created by adunne on 2015/10/23.
@@ -21,6 +22,7 @@ public class RenderingSystem extends EntitySystem {
     OrthographicCamera camera;
     FitViewport viewport;
     SkeletonRenderer modelRenderer;
+    SkeletonRendererDebug modelDebugRenderer;
 
     ComponentMapper<Image> im = ComponentMapper.getFor(Image.class);
     ComponentMapper<Model> mm = ComponentMapper.getFor(Model.class);
@@ -29,6 +31,7 @@ public class RenderingSystem extends EntitySystem {
     public RenderingSystem() {
         camera = new OrthographicCamera();
         modelRenderer = new SkeletonRenderer();
+        modelDebugRenderer = new SkeletonRendererDebug();
         batch = new SpriteBatch();
 
         viewport = new FitViewport(14f, 14 * Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth(), camera);
@@ -56,9 +59,6 @@ public class RenderingSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -82,7 +82,11 @@ public class RenderingSystem extends EntitySystem {
         model.skeleton.setFlipX(transform.flipped);
         model.skeleton.updateWorldTransform();
 
-        modelRenderer.draw(batch, model.skeleton);
+        //modelRenderer.draw(batch, model.skeleton);
+
+        modelDebugRenderer.getShapeRenderer().setProjectionMatrix(batch.getProjectionMatrix());
+        modelDebugRenderer.setScale(0.003f);
+        modelDebugRenderer.draw(model.skeleton);
     }
 
     private void renderImage(Entity entity, SpriteBatch batch) {

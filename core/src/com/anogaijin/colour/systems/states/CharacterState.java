@@ -86,7 +86,32 @@ public enum CharacterState implements State<CachedEntity> {
             entity.remove(Walk.class);
             entity.remove(Jump.class);
 
-            Util.trySetAnimationComponent(entity, 0, "Idle", true);
+            Util.trySetAnimationComponent(entity, 0, "Fall", true);
+        }
+
+        @Override
+        public void update(CachedEntity entity) {
+        }
+
+        @Override
+        public void exit(CachedEntity entity) {
+            entity.restore(Walk.class);
+            entity.restore(Jump.class);
+        }
+
+        @Override
+        public boolean onMessage(CachedEntity entity, Telegram telegram) {
+            return false;
+        }
+    },
+
+    Grabbing() {
+        @Override
+        public void enter(CachedEntity entity) {
+            entity.remove(Walk.class);
+            entity.remove(Jump.class);
+
+            Util.trySetAnimationComponent(entity, 0, "Jump", true);
         }
 
         @Override

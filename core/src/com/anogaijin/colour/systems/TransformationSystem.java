@@ -10,16 +10,16 @@ import com.badlogic.ashley.systems.IteratingSystem;
  * Created by adunne on 2015/09/19.
  */
 public class TransformationSystem extends IteratingSystem{
-    ComponentMapper<RigidBody>  rbm = ComponentMapper.getFor(RigidBody.class);
+    ComponentMapper<Collider>  rbm = ComponentMapper.getFor(Collider.class);
     ComponentMapper<Transform>  tm = ComponentMapper.getFor(Transform.class);
 
     public TransformationSystem() {
-        super(Family.all(RigidBody.class, Transform.class).get());
+        super(Family.all(Collider.class, Transform.class).get());
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        RigidBody collider = rbm.get(entity);
+        Collider collider = rbm.get(entity);
         Transform transform = tm.get(entity);
 
         // Mirroring any rigid body changes for the entity

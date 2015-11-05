@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
  * Created by adunne on 2015/09/19.
  */
 public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactListener {
-    ComponentMapper<RigidBody> rbm = ComponentMapper.getFor(RigidBody.class);
+    ComponentMapper<Collider> rbm = ComponentMapper.getFor(Collider.class);
 
     @Override
     public void beginContact(Contact contact) {
@@ -29,8 +29,8 @@ public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactLi
         if (entityA.equals(entityB))
             return;
 
-        RigidBody a = rbm.get(entityA);
-        RigidBody b = rbm.get(entityB);
+        Collider a = rbm.get(entityA);
+        Collider b = rbm.get(entityB);
 
         ContactData contactData = new ContactData(contact);
 
@@ -57,8 +57,8 @@ public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactLi
         if (entityA.equals(entityB))
             return;
 
-        RigidBody a = rbm.get(entityA);
-        RigidBody b = rbm.get(entityB);
+        Collider a = rbm.get(entityA);
+        Collider b = rbm.get(entityB);
 
         a.contacts.remove(ContactData.generageNewContactId(contact));
         b.contacts.remove(ContactData.generageNewContactId(contact));

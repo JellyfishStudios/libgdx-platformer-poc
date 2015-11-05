@@ -9,4 +9,5 @@ public class Input implements Component{
     public boolean MOVE_LEFT = false;
     public boolean MOVE_RIGHT = false;
     public boolean JUMP = false;
+    public boolean DROP = false;
 }

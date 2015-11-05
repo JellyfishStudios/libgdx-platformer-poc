@@ -7,26 +7,25 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
 
 /**
  * Created by adunne on 2015/09/24.
  */
 public class JumpingSystem extends IteratingSystem {
-    ComponentMapper<RigidBody> rbm = ComponentMapper.getFor(RigidBody.class);
+    ComponentMapper<Collider> rbm = ComponentMapper.getFor(Collider.class);
     ComponentMapper<Input> im = ComponentMapper.getFor(Input.class);
     ComponentMapper<Motion> mm = ComponentMapper.getFor(Motion.class);
     ComponentMapper<Brain> bm = ComponentMapper.getFor(Brain.class);
     ComponentMapper<Jump> jm = ComponentMapper.getFor(Jump.class);
-    ComponentMapper<CharacterSensor> sm = ComponentMapper.getFor(CharacterSensor.class);
 
     public JumpingSystem() {
-        super(Family.all(RigidBody.class, Motion.class, Jump.class, KeyboardController.class, Animation.class, Brain.class, CharacterSensor.class).get());
+        super(Family.all(
+                Collider.class, Motion.class, Jump.class, KeyboardController.class, Animation.class, Brain.class).get());
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        RigidBody rigidBody = rbm.get(entity);
+        Collider collider = rbm.get(entity);
         Input input = im.get(entity);
         Motion motion = mm.get(entity);
         Brain brain = bm.get(entity);
@@ -46,20 +45,20 @@ public class JumpingSystem extends IteratingSystem {
                 // Calculates required force to reach desired velocity in a given time-step
                 //
                 motion.force.y = PhysicsUtil.calculateRequiredImpulse(
-                        rigidBody.body.getMass(),
+                        collider.body.getMass(),
                         motion.velocity.y,
-                        rigidBody.body.getLinearVelocity().y);
+                        collider.body.getLinearVelocity().y);
 
                 if (motion.force.y == 0f)
                     return;
 
                 // Apply impulse!
                 //
-                rigidBody.body.applyLinearImpulse(
+                collider.body.applyLinearImpulse(
                         0f,
                         motion.force.y,
-                        rigidBody.body.getWorldCenter().x,
-                        rigidBody.body.getWorldCenter().y,
+                        collider.body.getWorldCenter().x,
+                        collider.body.getWorldCenter().y,
                         true);
             }
         }
@@ -67,7 +66,7 @@ public class JumpingSystem extends IteratingSystem {
         {
             // Check if we've reached the apex of the jump
             //
-            if (rigidBody.body.getLinearVelocity().y <= 0f)
+            if (collider.body.getLinearVelocity().y <= 0f)
                 brain.movement.changeState(CharacterState.Falling);
         }
     }

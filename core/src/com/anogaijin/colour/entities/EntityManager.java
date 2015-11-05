@@ -22,18 +22,17 @@ import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
  */
 public class EntityManager {
     World physicsWorld;
-    Engine ecsEngine;
+    public static Engine ecsEngine; // TODO: Remove this it's for debugging only
     AssetManagerEx assetManager;
 
     float humanDensity = 50f;
     float humanFriction = 0f;
     float humanFootFriction = 0f;
 
-    short CATEGORY_PLAYER = 0x01;
-    short CATEGORY_OBJECTS = 0x02;
+    public static short CATEGORY_PLAYER = 0x01;
+    public static short CATEGORY_OBJECTS = 0x02;
 
     KeyboardInputSystem keyboardInputSystem;
-    SensorDetectionSystem interactionSystem;
     WalkingSystem movementSystem;
     FallingSystem fallingSystem;
     JumpingSystem jumpingSystem;
@@ -41,6 +40,7 @@ public class EntityManager {
     CameraSystem cameraSystem;
     RenderingSystem modelRenderingSystem;
     AnimationSystem modelAnimationSystem;
+    LedgeGrabSystem ledgeGrabSystem;
 
     public EntityManager(Engine ecsEngine, AssetManagerEx assetManager) {
         this.ecsEngine = ecsEngine;
@@ -49,7 +49,7 @@ public class EntityManager {
 
     public void initialiseSystems() {
         ecsEngine.addSystem(keyboardInputSystem = new KeyboardInputSystem());
-        ecsEngine.addSystem(interactionSystem = new SensorDetectionSystem());
+        ecsEngine.addSystem(ledgeGrabSystem = new LedgeGrabSystem());
         ecsEngine.addSystem(movementSystem = new WalkingSystem());
         ecsEngine.addSystem(jumpingSystem = new JumpingSystem());
         ecsEngine.addSystem(fallingSystem = new FallingSystem());
@@ -64,7 +64,7 @@ public class EntityManager {
         movementSystem.addedToEngine(ecsEngine);
         jumpingSystem.addedToEngine(ecsEngine);
         fallingSystem.addedToEngine(ecsEngine);
-        interactionSystem.addedToEngine(ecsEngine);
+        ledgeGrabSystem.addedToEngine(ecsEngine);
         transformationSystemSystem.addedToEngine(ecsEngine);
         cameraSystem.addedToEngine(ecsEngine);
         modelAnimationSystem.addedToEngine(ecsEngine);
@@ -81,7 +81,7 @@ public class EntityManager {
 
             rubeRigidBody.rigidBody.setUserData(entity);
 
-            entity.add(new RigidBody(rubeRigidBody.rigidBody));
+            entity.add(new Collider(rubeRigidBody.rigidBody));
             ecsEngine.addEntity(entity);
 
             entities.put(rubeRigidBody.rigidBody.hashCode(), entity);
@@ -98,7 +98,7 @@ public class EntityManager {
                     entity = new CachedEntity();
 
                     rubeTexture.rubeRigidBody.rigidBody.setUserData(entity);
-                    entity.add(new RigidBody(rubeTexture.rubeRigidBody.rigidBody));
+                    entity.add(new Collider(rubeTexture.rubeRigidBody.rigidBody));
                     ecsEngine.addEntity(entity);
                 }
             }
@@ -145,13 +145,14 @@ public class EntityManager {
 
             entity.add(trans);
             entity.add(new Model(skeleton));
-            entity.add(new RigidBody(body));
-            entity.add(new CharacterSensor());
+            entity.add(new Collider(body));
             entity.add(new KeyboardController());
             entity.add(new Input());
             entity.add(new Motion());
             entity.add(new Jump());
             entity.add(new Walk());
+            entity.add(new Grab());
+            entity.add(new Climb());
             entity.add(new Camera(ecsEngine.getSystem(RenderingSystem.class).getCamera()));
             entity.add(new Animation(new AnimationState(new AnimationStateData(skeletonData))));
             entity.add(new Brain<>(entity, CharacterState.Idle));
@@ -201,7 +202,7 @@ public class EntityManager {
         shape.getVertex(1, pointB);
         shape.getVertex(2, pointC);
 
-        // TODO: Relies on points drawn from the rightIsTouching counter-clockwise (gotta fix this!)
+        // TODO: Relies on points drawn from the frontIsTouching counter-clockwise (gotta fix this!)
         //
         float height = (float)Math.sqrt(Math.pow(pointB.x-pointA.x, 2) + Math.pow(pointB.y-pointA.y, 2));
         float width = (float)Math.sqrt(Math.pow(pointC.x-pointB.x, 2) + Math.pow(pointC.y-pointB.y, 2));

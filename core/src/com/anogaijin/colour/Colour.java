@@ -9,6 +9,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 public class Colour extends ApplicationAdapter {
@@ -35,6 +36,9 @@ public class Colour extends ApplicationAdapter {
 
 	@Override
 	public void render () {
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 		entityManager.getPhysicsWorld().step(1/60f, 8, 3);
 		ecsEngine.update(Gdx.graphics.getDeltaTime());
 
