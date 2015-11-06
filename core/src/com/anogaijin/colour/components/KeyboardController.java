@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input;
  */
 public class KeyboardController implements Component {
     public int UP = Input.Keys.UP;
+    public int DOWN = Input.Keys.DOWN;
     public int LEFT = Input.Keys.LEFT;
     public int RIGHT = Input.Keys.RIGHT;
 }

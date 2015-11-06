@@ -8,8 +8,8 @@ import com.badlogic.gdx.physics.box2d.Fixture;
  * Created by adunne on 2015/10/24.
  */
 public class ContactData {
-    public Fixture fixtureA;
-    public Fixture fixtureB;
+    public Fixture myFixture;
+    public Fixture otherFixture;
     public boolean isTouching;
 
     public float tangentSpeed;
@@ -20,9 +20,9 @@ public class ContactData {
 
     private String contactId;
 
-    ContactData (Contact contact) {
-        this.fixtureA = contact.getFixtureA();
-        this.fixtureB = contact.getFixtureB();
+    ContactData (Contact contact, Fixture myFixture, Fixture otherFixture) {
+        this.myFixture = myFixture;
+        this.otherFixture = otherFixture;
         this.isTouching = contact.isTouching();
         this.tangentSpeed = contact.getTangentSpeed();
         this.fiction = contact.getFriction();

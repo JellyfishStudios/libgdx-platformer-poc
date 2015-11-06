@@ -36,7 +36,7 @@ public class WalkingSystem extends IteratingSystem {
 
         // If we've fallen hand this off to another state
         //
-        if (!PhysicsUtil.isSensorContacting(entity, PhysicsUtil.BOTTOM_SENSOR, collider.getContacts())) {
+        if (!PhysicsUtil.isMySensorTouching(PhysicsUtil.BOTTOM_SENSOR, collider.getContacts())) {
             brain.movement.changeState(CharacterState.Falling);
 
             return;
@@ -47,8 +47,9 @@ public class WalkingSystem extends IteratingSystem {
 
             brain.movement.changeState(CharacterState.Walking);
 
-            if (collider.flipped)
+            if (collider.flipped) {
                 flipRigidBody(collider);
+            }
         }
         else if (input.MOVE_LEFT) {
             motion.velocity.set(-walk.terminalVelocity, motion.velocity.y);

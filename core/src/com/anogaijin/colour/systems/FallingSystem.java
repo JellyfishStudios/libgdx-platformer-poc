@@ -24,7 +24,7 @@ public class FallingSystem extends IteratingSystem {
         Brain brain = bm.get(entity);
         Collider collider = cm.get(entity);
 
-        if (PhysicsUtil.isSensorContacting(entity, PhysicsUtil.BOTTOM_SENSOR, collider.getContacts())) {
+        if (PhysicsUtil.isMySensorTouching(PhysicsUtil.BOTTOM_SENSOR, collider.getContacts())) {
             // Ensure we reset the state if necessary, since we've already landed
             //
             if (brain.movement.getCurrentState() == CharacterState.Falling)

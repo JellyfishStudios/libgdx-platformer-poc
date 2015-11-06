@@ -33,11 +33,14 @@ public class KeyboardInputSystem extends IteratingSystem {
 
         if (Gdx.input.isKeyJustPressed(controller.UP))
             input.JUMP = true;
+        else if (Gdx.input.isKeyJustPressed(controller.DOWN))
+            input.DROP = true;
     }
 
     private void resetInputs(Input input) {
         input.MOVE_LEFT = false;
         input.MOVE_RIGHT = false;
         input.JUMP = false;
+        input.DROP = false;
     }
 }

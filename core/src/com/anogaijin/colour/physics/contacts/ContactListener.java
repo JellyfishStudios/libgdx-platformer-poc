@@ -32,10 +32,11 @@ public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactLi
         Collider a = rbm.get(entityA);
         Collider b = rbm.get(entityB);
 
-        ContactData contactData = new ContactData(contact);
+        ContactData contactDataA = new ContactData(contact, contact.getFixtureA(), contact.getFixtureB());
+        a.contacts.put(contactDataA.getContactId(), contactDataA);
 
-        a.contacts.put(contactData.getContactId(), contactData);
-        b.contacts.put(contactData.getContactId(), contactData);
+        ContactData contactDataB = new ContactData(contact, contact.getFixtureB(), contact.getFixtureA());
+        b.contacts.put(contactDataB.getContactId(), contactDataB);
 
         //Gdx.app.log("BEGIN COL", "Contact Hash " + contact.toString());
         //Gdx.app.log("BEGIN COL", "Fix A: " + "null" + " Collides with Fix B: " + contactData.fixtureB.getUserData().toString());

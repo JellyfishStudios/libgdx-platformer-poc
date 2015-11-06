@@ -2,7 +2,10 @@ package com.anogaijin.colour.physics;
 
 import com.anogaijin.colour.physics.contacts.ContactData;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 
@@ -29,32 +32,23 @@ public class PhysicsUtil {
         return mass * (desiredVelocity - actualVelocity);
     }
 
-    public static boolean isSensorContacting(Entity me, String sensorName, Array<ContactData> contacts) {
-        if (getContactingSensor(me, sensorName, contacts) != null)
+    public static boolean isMySensorTouching(String sensorName, Array<ContactData> contacts) {
+        if (getMyTouchingSensorContact(sensorName, contacts) != null)
             return true;
 
         return false;
     }
 
-    public static Fixture getContactingSensor(Entity me, String sensorName, Array<ContactData> contacts) {
+    public static ContactData getMyTouchingSensorContact(String sensorName, Array<ContactData> contacts) {
         for (ContactData contact : contacts) {
-            Fixture fixture = getFixture(me, contact);
-
-            if (fixture.isSensor()) {
-                BoundingBoxAttachment attachment = (BoundingBoxAttachment)fixture.getUserData();
+            if (contact.myFixture.isSensor()) {
+                BoundingBoxAttachment attachment = (BoundingBoxAttachment)contact.myFixture.getUserData();
 
                 if (attachment.getName().equals(sensorName) && contact.isTouching)
-                    return fixture;
+                    return contact;
             }
         }
 
         return null;
-    }
-
-    public static Fixture getFixture(Entity me, ContactData contact) {
-        if (contact.fixtureA.getBody().getUserData() == me)
-            return contact.fixtureA;
-
-        return contact.fixtureB;
     }
 }
