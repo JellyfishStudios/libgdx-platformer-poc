@@ -1,29 +1,26 @@
-# README #
+# COLOUR #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## Contributing ##
 
-### What is this repository for? ###
+### Artist ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Download and install google docs
+* Request access to the ColourArt shared folder in google docs
 
-### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### Developer ###
 
-### Contribution guidelines ###
 
-* Writing tests
-* Code review
-* Other guidelines
+* Request write access to this repo and clone
+* Clone the rubegdxlite repo, build and install the JAR file as a local maven asset
+* Download and install google docs
+* Request access to the ColourArt shared folder in google docs
 
-### Who do I talk to? ###
+##### OSX #####
 
-* Repo owner or admin
-* Other community or team contact
+* Create a sim link to the ColourArt folder called "assets" in the android module/folder
+ ln -s ~/Synced/ColourArt/final ~/MySrc/colour/android/assets
+
+##### Windows #####
+
+* Create shortcut to the ColourArt/final folder (called "assets") in the android module/folder

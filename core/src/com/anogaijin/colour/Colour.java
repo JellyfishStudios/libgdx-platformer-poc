@@ -23,7 +23,7 @@ public class Colour extends ApplicationAdapter {
 		ecsEngine = new Engine();
 		b2dr = new Box2DDebugRenderer();
 
-		assetManager = new AssetManagerEx(new AssetManager(new InternalFileHandleResolver()), "final/assets.json");
+		assetManager = new AssetManagerEx(new AssetManager(new InternalFileHandleResolver()), "assets.json");
 		assetManager.load("test");
 		assetManager.finishLoading();
 

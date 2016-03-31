@@ -11,7 +11,7 @@ buildscript {
 allprojects {
     apply plugin: "idea"
 
-    version = '1.0'
+    version = '1.0.0'
     ext {
         appName = "Colour"
         gdxVersion = '1.6.5'
@@ -31,13 +31,45 @@ allprojects {
     }
 }
 
+project(":spine-libgdx") {
+    apply plugin: "java"
+
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    }
+}
+
+project(":core") {
+    apply plugin: "java"
+
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+        compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+
+        // Local source repositories
+        //
+        compile project(":spine-libgdx")
+
+        // Local repositories
+        //
+        compile "com.anogaijin.rubegdxlite:rubegdxlite-loader:$rubeliteVersion"
+    }
+}
+
 project(":android") {
     apply plugin: "android"
 
     configurations { natives }
 
     dependencies {
+        // Local source repositories
+        //
         compile project(":core")
+
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -56,31 +88,14 @@ project(":android") {
     }
 }
 
-project(":core") {
-    apply plugin: "java"
-
-
-    dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
-        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-
-        // Local repositories
-        //
-        compile "com.esotericsoftware.spine:spine-libgdx:$spineVersion"
-        compile "com.anogaijin.rubegdxlite:rubegdxlite:$rubeliteVersion"
-    }
-}
-
 project(":desktop") {
     apply plugin: "java"
 
-
     dependencies {
+        // Local source repositories
+        //
         compile project(":core")
+
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
