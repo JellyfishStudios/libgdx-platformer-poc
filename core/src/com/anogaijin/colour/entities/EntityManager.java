@@ -275,7 +275,9 @@ public class EntityManager {
         bodyDef.position.set(
                 model.getX() + model.getRootBone().getWorldX(),
                 model.getY() + model.getRootBone().getWorldY());
-        bodyDef.angle = (model.getRootBone().getWorldRotation() * MathUtils.degRad);
+
+        // TODO: changed to getworldrotationx but this needs testing
+        bodyDef.angle = (model.getRootBone().getWorldRotationX() * MathUtils.degRad);
 
         return physicsWorld.createBody(bodyDef);
     }
